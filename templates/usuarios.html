@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Gerenciar Usuários</title>
+  <link rel="stylesheet" href="/static/style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Tomorrow&display=swap" rel="stylesheet">
+  
+  <style>
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      color: var(--cor-texto);
+    }
+
+    th,
+    td {
+      padding: 12px;
+      text-align: left;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    th {
+      background: rgba(255, 255, 255, 0.15);
+    }
+
+    .btn {
+      padding: 6px 12px;
+      border-radius: 6px;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: bold;
+      transition: 0.3s;
+    }
+
+    .btn-editar {
+      background: #4cafef;
+      color: white;
+    }
+
+    .btn-editar:hover {
+      background: #1565c0;
+    }
+
+    .btn-excluir {
+      background: #e53935;
+      color: white;
+    }
+
+    .btn-excluir:hover {
+      background: #b71c1c;
+    }
+  </style>
+</head>
+
+<body class="pagina">
+  <div class="container">
+    <h1>Gerenciar Usuários</h1>
+
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Nome</th>
+          <th>Função</th>
+          <th>Ações</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for user in usuarios %}
+        <tr>
+          <td>{{ user[0] }}</td>
+          <td>{{ user[1] }}</td>
+          <td>{{ user[2] }}</td>
+          <td>
+            <div class="acoes-btns">
+              <a href="/editar/{{ user[0] }}" class="btn btn-editar">Editar</a>
+              <form method="post" action="/excluir/{{ user[0] }}">
+                <button type="submit" class="btn btn-excluir">Excluir</button>
+              </form>
+            </div>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    <a href="/index" class="btn-voltar">← Voltar</a>
+  </div>
+</body>
+
+</html>
