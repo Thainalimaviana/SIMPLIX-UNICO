@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
   <meta charset="UTF-8">
   <title>Cadastrar Cliente</title>
@@ -25,9 +26,12 @@
       text-align: center;
       overflow-y: auto;
       max-height: 95vh;
+      margin-top: 40px;
     }
 
-    input, select, button {
+    input,
+    select,
+    button {
       width: 100%;
       margin: 8px 0;
       padding: 10px;
@@ -118,14 +122,33 @@
       font-weight: 600;
       cursor: pointer;
       transition: 0.3s;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
     }
 
     .btn-copiar:hover {
       background: #333;
     }
+
+    .loader {
+      display: inline-block;
+      width: 14px;
+      height: 14px;
+      border: 2px solid rgba(255, 255, 255, 0.4);
+      border-top-color: white;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      vertical-align: middle;
+      margin-right: 6px;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
   </style>
 </head>
+
 <body>
   <div class="container">
     <h1>Cadastrar Cliente</h1>
@@ -230,27 +253,32 @@
     }
 
     document.getElementById("btnBuscarCpf").addEventListener("click", async () => {
+      const btn = document.getElementById("btnBuscarCpf");
       const cpf = document.getElementById("cpfBusca").value.trim();
       if (!cpf) return alert("Digite um CPF válido!");
-      saida.textContent = "Consultando CPF...";
 
-      const res = await fetch("/simplix-passo12", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ cpf })
-      });
-      const data = await res.json();
+      btn.disabled = true;
+      btn.innerHTML = `<div class="loader"></div> Consultando...`;
+      saida.textContent = "";
 
-      if (!data.sucesso) {
-        saida.textContent = "❌ Erro: " + (data.mensagem || "Falha na consulta");
-        return;
-      }
+      try {
+        const res = await fetch("/simplix-passo12", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ cpf })
+        });
+        const data = await res.json();
 
-      listaPeriodos.innerHTML = "";
-      data.tabelas.forEach((tab, i) => {
-        const card = document.createElement("div");
-        card.classList.add("tabela-card");
-        card.innerHTML = `
+        if (!data.sucesso) {
+          saida.textContent = "❌ Erro: " + (data.mensagem || "Falha na consulta");
+          return;
+        }
+
+        listaPeriodos.innerHTML = "";
+        data.tabelas.forEach((tab, i) => {
+          const card = document.createElement("div");
+          card.classList.add("tabela-card");
+          card.innerHTML = `
           <div class="tabela-info">
             <h4>${tab.tabelaTitulo}</h4>
             <p><strong>Valor Líquido:</strong> R$ ${tab.valorLiquido.toFixed(2)}</p>
@@ -258,21 +286,28 @@
           </div>
           <button data-index="${i}" class="btn-selecionar">Selecionar</button>
         `;
-        listaPeriodos.appendChild(card);
-      });
-
-      passo1.classList.add("hidden");
-      passo2.classList.remove("hidden");
-      saida.textContent = "";
-
-      document.querySelectorAll(".btn-selecionar").forEach(btn => {
-        btn.addEventListener("click", (e) => {
-          const index = e.target.getAttribute("data-index");
-          tabelaSelecionada = data.tabelas[index];
-          passo2.classList.add("hidden");
-          passo3.classList.remove("hidden");
+          listaPeriodos.appendChild(card);
         });
-      });
+
+        passo1.classList.add("hidden");
+        passo2.classList.remove("hidden");
+        saida.textContent = "";
+
+        document.querySelectorAll(".btn-selecionar").forEach(btn => {
+          btn.addEventListener("click", (e) => {
+            const index = e.target.getAttribute("data-index");
+            tabelaSelecionada = data.tabelas[index];
+            passo2.classList.add("hidden");
+            passo3.classList.remove("hidden");
+          });
+        });
+
+      } catch (err) {
+        saida.textContent = "❌ Erro de conexão ou servidor indisponível.";
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = "Buscar CPF";
+      }
     });
 
     document.getElementById("btnFinalizar").addEventListener("click", async () => {
@@ -322,7 +357,7 @@
       };
 
       saida.style.display = "none";
-      saida.textContent = "📡 Enviando cadastro...";
+      saida.textContent = "Enviando cadastro...";
 
       const resp = await fetch("/simplix-cadastrar", {
         method: "POST",
@@ -331,7 +366,7 @@
       });
 
       const data = await resp.json();
-      console.log("📩 Retorno Simplix:", data);
+      console.log("Retorno Simplix:", data);
 
       linkProposta = data?.objectReturn?.link || "";
       if (linkProposta) {
@@ -345,9 +380,10 @@
       if (!linkProposta) return alert("Nenhum link disponível!");
       navigator.clipboard.writeText(linkProposta).then(() => {
         btnCopiar.textContent = "✅ Link Copiado!";
-        setTimeout(() => (btnCopiar.textContent = "📋 Copiar Link"), 2000);
+        setTimeout(() => (btnCopiar.textContent = " Copiar Link"), 2000);
       });
     });
   </script>
 </body>
+
 </html>
