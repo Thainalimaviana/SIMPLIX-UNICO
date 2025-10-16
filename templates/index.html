@@ -145,6 +145,14 @@
         .tabela-item b {
             color: #4ef3a3;
         }
+
+        .btn-esteira {
+            background-color: #9b59b6;
+        }
+
+        .btn-esteira:hover {
+            background-color: #8e44ad;
+        }
     </style>
 </head>
 
@@ -163,6 +171,7 @@
         <a href="/cadastrar" class="btn-cadastrar"><i class="fa fa-user-plus"></i> Cadastrar Cliente</a>
 
         {% if session['role'] == 'admin' %}
+        <a href="/esteira" class="btn-esteira"><i class="fa fa-gears"></i> Esteira</a>
         <a href="/usuarios" class="btn-gerenciar"><i class="fa fa-users"></i> Gerenciar Usuários</a>
         <a href="/register" class="btn-criar-fixo"><i class="fa fa-user-gear"></i> Criar Usuário</a>
         {% endif %}
@@ -292,4 +301,5 @@
         });
     </script>
 </body>
+
 </html>

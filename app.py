@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request, jsonify, redirect, url_for, session
+from datetime import datetime
 import requests
 import time
 import json
@@ -55,7 +56,7 @@ def init_db():
 
     if not c.fetchone():
         admin_user = "Leonardo"
-        admin_pass = hash_senha("123456")
+        admin_pass = hash_senha("Tech@2026")
         if isinstance(conn, sqlite3.Connection):
             c.execute("INSERT INTO users (nome, senha, role, background) VALUES (?, ?, ?, ?)",
                       (admin_user, admin_pass, "admin", "#133abb,#00e1ff"))
@@ -138,6 +139,44 @@ def gerenciar_usuarios():
     usuarios = c.fetchall()
     conn.close()
     return render_template("usuarios.html", usuarios=usuarios)
+
+@app.route("/esteira")
+def esteira():
+    if "user" not in session:
+        return redirect(url_for("login"))
+
+    conn = get_conn()
+    c = conn.cursor()
+
+    if isinstance(conn, sqlite3.Connection):
+        c.execute("""
+            CREATE TABLE IF NOT EXISTS esteira (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                digitador TEXT NOT NULL,
+                cpf TEXT NOT NULL,
+                bancarizadora TEXT,
+                data_hora TEXT,
+                valor_contrato REAL
+            )
+        """)
+        c.execute("SELECT digitador, cpf, bancarizadora, data_hora, valor_contrato FROM esteira ORDER BY id DESC")
+    else:
+        c.execute("""
+            CREATE TABLE IF NOT EXISTS esteira (
+                id SERIAL PRIMARY KEY,
+                digitador TEXT NOT NULL,
+                cpf TEXT NOT NULL,
+                bancarizadora TEXT,
+                data_hora TEXT,
+                valor_contrato REAL
+            )
+        """)
+        c.execute("SELECT digitador, cpf, bancarizadora, data_hora, valor_contrato FROM esteira ORDER BY id DESC")
+
+    registros = c.fetchall()
+    conn.close()
+
+    return render_template("esteira.html", registros=registros)
 
 @app.route("/excluir/<int:user_id>", methods=["POST"])
 def excluir_usuario(user_id):
@@ -498,6 +537,53 @@ def simplix_cadastrar():
 
         print(f"[DEBUG] Status: {response.status_code}")
         print(f"[DEBUG] Resposta: {response.text}")
+
+        try:
+            data = response.json()
+            if response.status_code == 200 and data.get("success", False):
+                conn = get_conn()
+                c = conn.cursor()
+
+                if isinstance(conn, sqlite3.Connection):
+                    c.execute("""
+                        CREATE TABLE IF NOT EXISTS esteira (
+                            id INTEGER PRIMARY KEY AUTOINCREMENT,
+                            digitador TEXT NOT NULL,
+                            cpf TEXT NOT NULL,
+                            bancarizadora TEXT,
+                            data_hora TEXT,
+                            valor_contrato REAL
+                        )
+                    """)
+                else:
+                    c.execute("""
+                        CREATE TABLE IF NOT EXISTS esteira (
+                            id SERIAL PRIMARY KEY,
+                            digitador TEXT NOT NULL,
+                            cpf TEXT NOT NULL,
+                            bancarizadora TEXT,
+                            data_hora TEXT,
+                            valor_contrato REAL
+                        )
+                    """)
+
+                digitador = session.get("user", "Desconhecido")
+                cpf = payload["cliente"]["cpf"]
+                bancarizadora = payload.get("operacao", {}).get("bancarizadora", "Não informado")
+                valor_contrato = payload.get("operacao", {}).get("valorLiquido", 0)
+                data_hora = datetime.now().strftime("%d/%m/%Y %H:%M")
+
+                c.execute("""
+                    INSERT INTO esteira (digitador, cpf, bancarizadora, data_hora, valor_contrato)
+                    VALUES (?, ?, ?, ?, ?)
+                """, (digitador, cpf, bancarizadora, data_hora, valor_contrato))
+
+                conn.commit()
+                conn.close()
+                print(f"[ESTEIRA] ✅ Proposta salva: {cpf} - {valor_contrato}")
+
+        except Exception as e:
+            print(f"[ERRO ao salvar na esteira]: {e}")
 
         try:
             return jsonify(response.json()), response.status_code

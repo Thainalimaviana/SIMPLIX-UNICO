@@ -34,11 +34,12 @@
     button {
       width: 100%;
       margin: 8px 0;
-      padding: 10px;
+      padding: 12px 18px;
       border-radius: 8px;
       border: none;
       font-size: 15px;
       transition: all 0.3s ease;
+      box-sizing: border-box;
     }
 
     input,
@@ -237,7 +238,7 @@
     <h1>Cadastrar Cliente</h1>
 
     <div id="passo1">
-      <input type="text" id="cpfBusca" placeholder="Digite o CPF do cliente" maxlength="11">
+      <input type="text" id="cpfBusca" placeholder="Digite o CPF do cliente">
       <button id="btnBuscarCpf">Buscar CPF</button>
     </div>
 
@@ -350,7 +351,7 @@
 
     document.getElementById("btnBuscarCpf").addEventListener("click", async () => {
       const btn = document.getElementById("btnBuscarCpf");
-      const cpf = document.getElementById("cpfBusca").value.trim();
+      const cpf = document.getElementById("cpfBusca").value.replace(/\D/g, "").trim();
       if (!cpf) return alert("Digite um CPF válido!");
 
       btn.disabled = true;
@@ -375,12 +376,12 @@
           const card = document.createElement("div");
           card.classList.add("tabela-card");
           card.innerHTML = `
-          <div class="tabela-info">
-            <h4>${tab.tabelaTitulo}</h4>
-            <p><strong>Valor Líquido:</strong> R$ ${tab.valorLiquido.toFixed(2)}</p>
-            <p><strong>Taxa:</strong> ${tab.taxa}% | <strong>TC:</strong> ${tab.tc}%</p>
-          </div>
-          <button data-index="${i}" class="btn-selecionar">Selecionar</button>`;
+        <div class="tabela-info">
+          <h4>${tab.tabelaTitulo}</h4>
+          <p><strong>Valor Líquido:</strong> R$ ${tab.valorLiquido.toFixed(2)}</p>
+          <p><strong>Taxa:</strong> ${tab.taxa}% | <strong>TC:</strong> ${tab.tc}%</p>
+        </div>
+        <button data-index="${i}" class="btn-selecionar">Selecionar</button>`;
           listaPeriodos.appendChild(card);
         });
 
@@ -409,6 +410,10 @@
 
       const formData = Object.fromEntries(new FormData(passo3).entries());
       const cpf = document.getElementById("cpfBusca").value.trim();
+      const btnFinalizar = document.getElementById("btnFinalizar");
+
+      btnFinalizar.disabled = true;
+      btnFinalizar.innerHTML = `<div class="loader"></div> Enviando proposta...`;
 
       const payload = {
         cliente: {
@@ -450,17 +455,29 @@
         }
       };
 
-      const resp = await fetch("/simplix-cadastrar", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload)
-      });
+      try {
+        const resp = await fetch("/simplix-cadastrar", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
 
-      const data = await resp.json();
-      linkProposta = data?.objectReturn?.link || "";
+        const data = await resp.json();
+        linkProposta = data?.objectReturn?.link || "";
 
-      if (linkProposta) linkBox.classList.remove("hidden");
-      else alert("Cadastro concluído, mas sem link retornado.");
+        if (linkProposta) {
+          alert("✅ Cliente cadastrado com sucesso!");
+          linkBox.classList.remove("hidden");
+        } else {
+          alert("Cadastro concluído, mas sem link retornado.");
+        }
+
+      } catch (err) {
+        alert("❌ Erro ao finalizar o cadastro. Tente novamente.");
+      } finally {
+        btnFinalizar.disabled = false;
+        btnFinalizar.innerHTML = "Finalizar Cadastro";
+      }
     });
 
     btnCopiar.addEventListener("click", () => {
