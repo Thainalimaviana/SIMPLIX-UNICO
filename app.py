@@ -162,10 +162,20 @@ def editar_usuario(user_id):
     conn = get_conn()
     c = conn.cursor()
 
+    if isinstance(conn, sqlite3.Connection):
+        c.execute("SELECT id, nome, role, background FROM users WHERE id = ?", (user_id,))
+    else:
+        c.execute("SELECT id, nome, role, background FROM users WHERE id = %s", (user_id,))
+    user = c.fetchone()
+
+    if not user:
+        conn.close()
+        return "Usuário não encontrado", 404
+
     if request.method == "POST":
         novo_nome = request.form["nome"]
         nova_senha = request.form["senha"]
-        novo_background = request.form["background"]
+        novo_background = request.form.get("background", user[3] if len(user) > 3 else "#133abb,#00e1ff")
 
         if nova_senha.strip():
             senha_hash = hash_senha(nova_senha)
@@ -187,11 +197,6 @@ def editar_usuario(user_id):
         conn.close()
         return redirect(url_for("gerenciar_usuarios"))
 
-    if isinstance(conn, sqlite3.Connection):
-        c.execute("SELECT id, nome, role, background FROM users WHERE id = ?", (user_id,))
-    else:
-        c.execute("SELECT id, nome, role, background FROM users WHERE id = %s", (user_id,))
-    user = c.fetchone()
     conn.close()
     return render_template("editar.html", user=user)
 
