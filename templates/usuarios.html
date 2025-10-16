@@ -246,17 +246,16 @@
           paginate: {
             previous: "Anterior",
             next: "Próximo"
-          },
-          infoCallback: function (settings, start, end, max, total, pre) {
-            const exibindo = end - start + 1; // quantidade real visível
-            const porPagina = settings._iDisplayLength;
-            const qtdPagina = Math.min(exibindo, porPagina);
-            return `${qtdPagina} de ${porPagina} usuários`;
           }
+        },
+        infoCallback: function (settings, start, end, max, total, pre) {
+          const exibindo = end - start + 1; // quantidade exibida
+          const porPagina = settings._iDisplayLength; // limite configurado
+          const qtdPagina = Math.min(exibindo, porPagina);
+          return `${qtdPagina} de ${porPagina} usuários`;
         }
       });
     });
   </script>
 </body>
-
 </html>
