@@ -250,7 +250,6 @@ def cadastrar():
 
 @app.route("/simplix-passo12", methods=["POST"])
 def simplix_passo12():
-    """Executa Passo 1 e 2 localmente (sem depender do webhook), retornando tabelas e períodos"""
     global ULTIMO_TRANSACTION_ID
     data = request.get_json()
     cpf = data.get("cpf")
@@ -309,6 +308,9 @@ def simplix_passo12():
     }
 
     tabelas = []
+    ultima_desc = None
+    mensagens_api = []
+    desc_final = None
 
     print(f"[DEBUG] Iniciando PASSO 2 (simulate com re-tentativas)...")
 
@@ -330,6 +332,11 @@ def simplix_passo12():
                 data2 = json.loads(resp2.text.strip() or "{}")
 
             retorno = data2.get("objectReturn", {}).get("retornoSimulacao", [])
+            desc_atual = data2.get("objectReturn", {}).get("description")
+
+            if desc_atual:
+                mensagens_api.append(desc_atual)
+                ultima_desc = desc_atual
 
             if retorno:
                 for t in retorno:
@@ -343,7 +350,6 @@ def simplix_passo12():
                         "tc": (t.get("detalhes") or {}).get("tc", 0),
                         "parcelas": (t.get("detalhes") or {}).get("parcelas", [])
                     })
-
                 print(f"[PASSO 2 ✅] {len(tabelas)} tabelas retornadas na tentativa {tentativa + 1}.")
                 break
             else:
@@ -356,9 +362,78 @@ def simplix_passo12():
 
     if not tabelas:
         print("[FINAL ❌] Nenhuma tabela retornada após todas as tentativas.")
+        print("[EXTRA 🔄] Tentando consulta direta final (modo síncrono)...")
+
+        try:
+            tentativa_sincrona = 0
+            while tentativa_sincrona < 3:
+                tentativa_sincrona += 1
+                print(f"[SINCRONO 🔁] Tentativa {tentativa_sincrona}/3 (modo síncrono)...")
+
+                resp_final = requests.post(
+                    "https://simplix-integration.partner1.com.br/api/Proposal/Simulate",
+                    json={"cpf": cpf},
+                    headers=headers,
+                    timeout=60
+                )
+
+                print(f"[DEBUG] Status consulta direta: {resp_final.status_code}")
+                print(f"[DEBUG] Resposta direta: {resp_final.text}")
+
+                try:
+                    data_final = resp_final.json()
+                except Exception:
+                    data_final = {}
+
+                retorno_final = data_final.get("objectReturn", {}).get("retornoSimulacao", [])
+                desc_final = (
+                    data_final.get("objectReturn", {}).get("description")
+                    or data_final.get("objectReturn", {}).get("observacao")
+                    or data_final.get("message")
+                    or "Sem descrição disponível"
+                )
+
+                if retorno_final:
+                    for t in retorno_final:
+                        tabelas.append({
+                            "bancarizadora": t.get("bancarizadora"),
+                            "tabelaTitulo": t.get("tabelaTitulo"),
+                            "tabelaId": t.get("tabelaId"),
+                            "simulationId": t.get("simulationId"),
+                            "valorLiquido": t.get("valorLiquido", 0),
+                            "taxa": (t.get("detalhes") or {}).get("taxa", 0),
+                            "tc": (t.get("detalhes") or {}).get("tc", 0),
+                            "parcelas": (t.get("detalhes") or {}).get("parcelas", [])
+                        })
+                    print("[FINAL ✅] Resultado obtido pela consulta direta.")
+                    break
+
+                if desc_final and "limite" in desc_final.lower():
+                    if tentativa_sincrona < 3:
+                        print("[INFO ⏳] Limite de requisições — aguardando 10s para nova tentativa...")
+                        time.sleep(10)
+                        continue
+                    else:
+                        print("[INFO ⚠️] Limite de tentativas síncronas atingido (3x). Encerrando.")
+                        break
+                else:
+                    break
+
+            ultima_desc = desc_final or ultima_desc
+            print(f"[FINAL ❌] Consulta direta sem retorno. Descrição: {ultima_desc}")
+
+        except Exception as e:
+            print(f"[ERRO AO CONSULTAR DIRETO ❌] {e}")
+            desc_final = f"Erro ao consultar direto: {e}"
+
+    if not tabelas:
         return jsonify({
             "sucesso": False,
-            "mensagem": "Nenhuma tabela disponível (verifique o CPF ou aguarde alguns segundos)",
+            "mensagem": desc_final or ultima_desc or "Nenhuma tabela disponível (verifique o CPF ou aguarde alguns segundos)",
+            "desc_final": desc_final,
+            "objectReturn": {
+                "description": ultima_desc or desc_final or "Sem descrição"
+            },
             "transactionId": transactionId
         }), 400
 
@@ -445,6 +520,14 @@ def listar_periodos():
         return jsonify(tabelas)
     except Exception as e:
         return jsonify({"erro": f"Falha ao buscar tabelas: {e}"}), 500
+
+@app.route('/')
+def home():
+    return render_template('index.html')
+
+@app.route('/index')
+def index_redirect():
+    return render_template('index.html')
 
 if __name__ == "__main__":
     app.run(debug=True, port=8600)

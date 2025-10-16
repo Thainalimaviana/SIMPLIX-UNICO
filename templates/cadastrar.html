@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="UTF-8">
-  <title>Cadastrar Cliente</title>
+  <title>🚀 Cadastrar Cliente</title>
   <link rel="stylesheet" href="/static/style.css">
   <style>
     body {
@@ -38,6 +38,26 @@
       border-radius: 8px;
       border: none;
       font-size: 15px;
+      transition: all 0.3s ease;
+    }
+
+    input,
+    select {
+      background: rgba(255, 255, 255, 0.137);
+      color: #fff;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      outline: none;
+    }
+
+    input::placeholder {
+      color: #ccc;
+    }
+
+    input:focus,
+    select:focus {
+      background: rgb(14, 14, 14);
+      border-color: rgba(255, 255, 255, 0.35);
+      transform: scale(1.02);
     }
 
     button {
@@ -50,6 +70,7 @@
 
     button:hover {
       background-color: #1d6ed8;
+      transform: scale(1.03);
     }
 
     .hidden {
@@ -111,6 +132,43 @@
       background: #1d6ed8;
     }
 
+    form#form-cadastro {
+      margin-top: 20px;
+    }
+
+    form#form-cadastro h3,
+    form#form-cadastro h4 {
+      margin-top: 15px;
+      margin-bottom: 10px;
+    }
+
+    form#form-cadastro input,
+    form#form-cadastro select {
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #fff;
+      font-size: 14px;
+      padding: 10px;
+      border-radius: 8px;
+      transition: 0.3s;
+    }
+
+    form#form-cadastro input:focus,
+    form#form-cadastro select:focus {
+      background: rgba(255, 255, 255, 0.22);
+      border-color: rgba(255, 255, 255, 0.35);
+    }
+
+    #btnFinalizar {
+      margin-top: 15px;
+      background-color: #00c853;
+    }
+
+    #btnFinalizar:hover {
+      background-color: #00a043;
+      transform: scale(1.03);
+    }
+
     .btn-copiar {
       margin-top: 10px;
       background: #111;
@@ -146,6 +204,31 @@
         transform: rotate(360deg);
       }
     }
+
+    h1 {
+      font-size: 26px;
+      margin-bottom: 20px;
+      font-weight: 700;
+      text-align: center;
+    }
+
+    select option {
+      background-color: #4b0082 !important;
+      color: #fff !important;
+    }
+
+    select {
+      background-color: rgba(255, 255, 255, 0.15);
+      color: #fff;
+      border: 1px solid rgba(255, 255, 255, 0.25);
+    }
+
+    select:focus {
+      background-color: rgba(255, 255, 255, 0.25);
+      border-color: rgba(255, 255, 255, 0.5);
+      outline: none;
+      transform: scale(1.02);
+    }
   </style>
 </head>
 
@@ -161,68 +244,71 @@
     <div id="passo2" class="hidden">
       <h3>Selecione os períodos disponíveis:</h3>
       <div id="lista-periodos" class="periodos"></div>
+      <button class="btn-voltar" id="voltar1">Voltar</button>
     </div>
 
     <form id="form-cadastro" class="hidden">
       <h3>Dados do Cliente</h3>
+      <div class="form-grid">
+        <input type="text" name="rg" id="rg" placeholder="RG" required>
+        <input type="text" name="nome" placeholder="Nome completo" required>
+        <input type="email" name="email" id="email" placeholder="Email" required>
+        <input type="text" name="telefone" id="telefone" placeholder="Telefone (ex: 5511999999999)" required>
+        <input type="text" name="ocupacao" placeholder="Cargo" required>
+        <select name="estadoCivil" id="estadoCivil" required>
+          <option value="">Estado civil</option>
+          <option value="Solteiro">Solteiro</option>
+          <option value="Casado">Casado</option>
+          <option value="Divorciado">Divorciado</option>
+          <option value="Viúvo">Viúvo</option>
+          <option value="União Estável">União Estável</option>
+        </select>
+        <select name="nacionalidade" id="nacionalidade" required>
+          <option value="">Nacionalidade</option>
+          <option value="Brasileiro">Brasileiro</option>
+          <option value="Estrangeiro">Estrangeiro</option>
+        </select>
+        <input type="date" name="dataDeNascimento" required>
+      </div>
 
-      <input type="text" name="rg" id="rg" placeholder="RG" required>
-      <input type="text" name="nome" placeholder="Nome completo" required>
-      <input type="email" name="email" id="email" placeholder="Email" required>
-      <input type="text" name="telefone" id="telefone" placeholder="Telefone (ex: 5511999999999)" required>
-      <input type="text" name="ocupacao" placeholder="Cargo" required>
+      <h4>Endereço</h4>
+      <div class="form-grid">
+        <input type="text" name="cep" placeholder="CEP" required>
+        <input type="text" name="logradouro" placeholder="Rua / Logradouro" required>
+        <input type="text" name="numero" placeholder="Número" required>
+        <input type="text" name="bairro" placeholder="Bairro" required>
+        <input type="text" name="cidade" placeholder="Cidade" required>
+        <input type="text" name="estado" placeholder="UF" maxlength="2" required>
+        <input type="text" name="complemento" placeholder="Complemento / Observação">
+      </div>
 
-      <select name="estadoCivil" id="estadoCivil" required>
-        <option value="">Selecione o estado civil</option>
-        <option value="Solteiro">Solteiro</option>
-        <option value="Casado">Casado</option>
-        <option value="Divorciado">Divorciado</option>
-        <option value="Viúvo">Viúvo</option>
-        <option value="União Estável">União Estável</option>
-      </select>
-
-      <select name="nacionalidade" id="nacionalidade" required>
-        <option value="">Selecione a nacionalidade</option>
-        <option value="Brasileiro">Brasileiro</option>
-        <option value="Estrangeiro">Estrangeiro</option>
-      </select>
-
-      <input type="date" name="dataDeNascimento" required>
-
-      <h4 style="margin-top:15px;">Endereço</h4>
-      <input type="text" name="cep" placeholder="CEP" required>
-      <input type="text" name="logradouro" placeholder="Rua / Logradouro" required>
-      <input type="text" name="numero" placeholder="Número" required>
-      <input type="text" name="bairro" placeholder="Bairro" required>
-      <input type="text" name="cidade" placeholder="Cidade" required>
-      <input type="text" name="estado" placeholder="UF" maxlength="2" required>
-      <input type="text" name="complemento" placeholder="Complemento / Observação">
-
-      <h4 style="margin-top:15px;">Conta Bancária</h4>
-      <input type="text" name="codigoDoBanco" placeholder="Código do Banco (ex: 001)" required>
-      <input type="text" name="agencia" placeholder="Agência" required>
-      <input type="text" name="conta" placeholder="Conta" required>
-      <input type="text" name="digitoDaConta" placeholder="Dígito da Conta" required>
-
-      <select name="tipoDeConta" id="tipoDeConta" required>
-        <option value="">Selecione o tipo de conta</option>
-        <option value="ContaCorrente">Conta Corrente</option>
-        <option value="Poupança">Poupança</option>
-        <option value="Salário">Salário</option>
-      </select>
-
-      <select name="tipoDeOperacao" required>
-        <option value="">Selecione o tipo de operação</option>
-        <option value="Transferencia">Transferência</option>
-        <option value="TED">TED</option>
-        <option value="DOC">DOC</option>
-      </select>
+      <h4>Conta Bancária</h4>
+      <div class="form-grid">
+        <input type="text" name="codigoDoBanco" placeholder="Código do Banco (ex: 001)" required>
+        <input type="text" name="agencia" placeholder="Agência" required>
+        <input type="text" name="conta" placeholder="Conta" required>
+        <input type="text" name="digitoDaConta" placeholder="Dígito da Conta" required>
+        <select name="tipoDeConta" id="tipoDeConta" required>
+          <option value="">Tipo de conta</option>
+          <option value="ContaCorrente">Conta Corrente</option>
+          <option value="Poupança">Poupança</option>
+          <option value="Salário">Salário</option>
+        </select>
+        <select name="tipoDeOperacao" required>
+          <option value="">Tipo de operação</option>
+          <option value="Transferencia">Transferência</option>
+          <option value="TED">TED</option>
+          <option value="DOC">DOC</option>
+        </select>
+      </div>
 
       <button type="button" id="btnFinalizar">Finalizar Cadastro</button>
+      <button type="button" class="btn-voltar" onclick="window.location.href='/index'">Voltar à tela inicial</button>
+      <button type="button" class="btn-voltar" id="voltar2">Voltar</button>
     </form>
 
     <div id="linkBox" class="hidden">
-      <button id="btnCopiar" class="btn-copiar">📋 Copiar Link</button>
+      <button id="btnCopiar" class="btn-copiar">Copiar Link</button>
     </div>
 
     <pre id="saida" style="margin-top:20px; text-align:left; display:none;"></pre>
@@ -236,16 +322,26 @@
     const saida = document.getElementById("saida");
     const linkBox = document.getElementById("linkBox");
     const btnCopiar = document.getElementById("btnCopiar");
+    const voltar1 = document.getElementById("voltar1");
+    const voltar2 = document.getElementById("voltar2");
 
     let tabelaSelecionada = null;
     let linkProposta = "";
 
+    voltar1.addEventListener("click", () => {
+      passo2.classList.add("hidden");
+      passo1.classList.remove("hidden");
+    });
+
+    voltar2.addEventListener("click", () => {
+      passo3.classList.add("hidden");
+      passo2.classList.remove("hidden");
+    });
+
     function normalizarCampos() {
       const rg = document.getElementById("rg");
       const telefone = document.getElementById("telefone");
-
       rg.value = rg.value.replace(/\D/g, "");
-
       let tel = telefone.value.replace(/\D/g, "");
       if (tel.startsWith("0")) tel = tel.slice(1);
       if (!tel.startsWith("55")) tel = "55" + tel;
@@ -282,16 +378,14 @@
           <div class="tabela-info">
             <h4>${tab.tabelaTitulo}</h4>
             <p><strong>Valor Líquido:</strong> R$ ${tab.valorLiquido.toFixed(2)}</p>
-            <p><strong>Taxa:</strong> ${tab.taxa}% &nbsp; | &nbsp; <strong>TC:</strong> ${tab.tc}%</p>
+            <p><strong>Taxa:</strong> ${tab.taxa}% | <strong>TC:</strong> ${tab.tc}%</p>
           </div>
-          <button data-index="${i}" class="btn-selecionar">Selecionar</button>
-        `;
+          <button data-index="${i}" class="btn-selecionar">Selecionar</button>`;
           listaPeriodos.appendChild(card);
         });
 
         passo1.classList.add("hidden");
         passo2.classList.remove("hidden");
-        saida.textContent = "";
 
         document.querySelectorAll(".btn-selecionar").forEach(btn => {
           btn.addEventListener("click", (e) => {
@@ -356,9 +450,6 @@
         }
       };
 
-      saida.style.display = "none";
-      saida.textContent = "Enviando cadastro...";
-
       const resp = await fetch("/simplix-cadastrar", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -366,21 +457,17 @@
       });
 
       const data = await resp.json();
-      console.log("Retorno Simplix:", data);
-
       linkProposta = data?.objectReturn?.link || "";
-      if (linkProposta) {
-        linkBox.classList.remove("hidden");
-      } else {
-        alert("Cadastro concluído, mas sem link retornado.");
-      }
+
+      if (linkProposta) linkBox.classList.remove("hidden");
+      else alert("Cadastro concluído, mas sem link retornado.");
     });
 
     btnCopiar.addEventListener("click", () => {
       if (!linkProposta) return alert("Nenhum link disponível!");
       navigator.clipboard.writeText(linkProposta).then(() => {
-        btnCopiar.textContent = "✅ Link Copiado!";
-        setTimeout(() => (btnCopiar.textContent = " Copiar Link"), 2000);
+        btnCopiar.textContent = "Link Copiado!";
+        setTimeout(() => (btnCopiar.textContent = "Copiar Link"), 2000);
       });
     });
   </script>
