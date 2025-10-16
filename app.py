@@ -359,11 +359,11 @@ def simplix_passo12():
                 break
             else:
                 print(f"[AGUARDANDO] Tentativa {tentativa + 1}/10 — resultados ainda não disponíveis...")
-                time.sleep(5)
+                time.sleep(3)
 
         except Exception as e:
             print(f"[ERRO AO CONSULTAR SIMULATE ❌] {e}")
-            time.sleep(5)
+            time.sleep(3)
 
     if not tabelas:
         print("[FINAL ❌] Nenhuma tabela retornada após todas as tentativas.")
