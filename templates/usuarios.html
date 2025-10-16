@@ -16,9 +16,9 @@
       display: flex;
       justify-content: center;
       align-items: flex-start;
-      height: 100vh;
+      min-height: 100vh;
       margin: 0;
-      padding-top: 40px;
+      padding: 40px 0;
     }
 
     .container {
@@ -240,13 +240,18 @@
         pageLength: 20,
         lengthChange: false,
         language: {
-          search: "Pesquisar nome ou ID:",
+          search: "🔍 Pesquisar nome ou ID:",
           zeroRecords: "Nenhum usuário encontrado",
           infoEmpty: "Nenhum usuário",
-          info: "_TOTAL_ usuários de 20",
           paginate: {
             previous: "Anterior",
             next: "Próximo"
+          },
+          infoCallback: function (settings, start, end, max, total, pre) {
+            const exibindo = end - start + 1; // quantidade real visível
+            const porPagina = settings._iDisplayLength;
+            const qtdPagina = Math.min(exibindo, porPagina);
+            return `${qtdPagina} de ${porPagina} usuários`;
           }
         }
       });
