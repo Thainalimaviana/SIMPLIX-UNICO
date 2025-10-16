@@ -550,7 +550,7 @@ def simplix_cadastrar():
                             id INTEGER PRIMARY KEY AUTOINCREMENT,
                             digitador TEXT NOT NULL,
                             cpf TEXT NOT NULL,
-                            bancarizadora TEXT,
+                            tabela TEXT,
                             data_hora TEXT,
                             valor_contrato REAL
                         )
@@ -561,7 +561,7 @@ def simplix_cadastrar():
                             id SERIAL PRIMARY KEY,
                             digitador TEXT NOT NULL,
                             cpf TEXT NOT NULL,
-                            bancarizadora TEXT,
+                            tabela TEXT,
                             data_hora TEXT,
                             valor_contrato REAL
                         )
@@ -569,18 +569,22 @@ def simplix_cadastrar():
 
                 digitador = session.get("user", "Desconhecido")
                 cpf = payload["cliente"]["cpf"]
-                bancarizadora = payload.get("operacao", {}).get("bancarizadora", "Não informado")
-                valor_contrato = payload.get("operacao", {}).get("valorLiquido", 0)
+                tabela_nome = payload.get("operacao", {}).get("tabelaTitulo", "Não informado")
+                valor_contrato = (
+                    payload.get("operacao", {}).get("valorLiquido")
+                    or payload.get("operacao", {}).get("valor")
+                    or 0
+                )
                 data_hora = datetime.now().strftime("%d/%m/%Y %H:%M")
 
                 c.execute("""
-                    INSERT INTO esteira (digitador, cpf, bancarizadora, data_hora, valor_contrato)
+                    INSERT INTO esteira (digitador, cpf, tabela, data_hora, valor_contrato)
                     VALUES (?, ?, ?, ?, ?)
-                """, (digitador, cpf, bancarizadora, data_hora, valor_contrato))
+                """, (digitador, cpf, tabela_nome, data_hora, valor_contrato))
 
                 conn.commit()
                 conn.close()
-                print(f"[ESTEIRA] ✅ Proposta salva: {cpf} - {valor_contrato}")
+                print(f"[ESTEIRA] ✅ Proposta salva: {cpf} - {tabela_nome} - R$ {valor_contrato:.2f}")
 
         except Exception as e:
             print(f"[ERRO ao salvar na esteira]: {e}")
