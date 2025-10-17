@@ -624,5 +624,19 @@ def home():
 def index_redirect():
     return render_template('index.html')
 
+@app.route("/excluir-proposta/<cpf>", methods=["POST"])
+def excluir_proposta(cpf):
+    try:
+        conn = get_conn()
+        c = conn.cursor()
+        c.execute("DELETE FROM esteira WHERE cpf = ?", (cpf,))
+        conn.commit()
+        conn.close()
+        print(f"[ESTEIRA] ❌ Proposta excluída: {cpf}")
+        return jsonify({"success": True, "mensagem": "Proposta excluída com sucesso."}), 200
+    except Exception as e:
+        print(f"[ERRO excluir_proposta]: {e}")
+        return jsonify({"success": False, "erro": str(e)}), 500
+
 if __name__ == "__main__":
     app.run(debug=True, port=8600)
