@@ -414,9 +414,18 @@ def simplix_passo12():
                 tentativa_sincrona += 1
                 print(f"[SINCRONO 🔁] Tentativa {tentativa_sincrona}/3 (modo síncrono)...")
 
+                payload_simulate = {
+                    "Body": {
+                        "cpf": cpf,
+                        "produto": 1,
+                        "convenio": 1,
+                        "parcelas": 0
+                    }
+                }
+
                 resp_final = requests.post(
                     "https://simplix-integration.partner1.com.br/api/Proposal/Simulate",
-                    json={"cpf": cpf},
+                    json=payload_simulate,
                     headers=headers,
                     timeout=60
                 )
