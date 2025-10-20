@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <title>{% block titulo %}Simplix{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Creepster&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+
+<body class="pagina">
+
+    <button class="menu-toggle" id="menuToggle"><i class="fa fa-bars"></i></button>
+
+    <div class="sidebar" id="sidebar">
+        <div>
+            <div class="logo">SIMPLIX 🎃</div>
+            <div class="user-info">
+                <h3>{{ session["user"] }}</h3>
+                <span>{{ session["role"] }}</span>
+            </div>
+
+            <ul class="menu">
+                <li><a href="/index">▸ Dashboard</a></li>
+                <li><a href="/cadastrar">▸ Cadastrar Cliente</a></li>
+                {% if session['role'] == 'admin' %}
+                <li><a href="/esteira">▸ Esteira</a></li>
+                <li><a href="/usuarios">▸ Gerenciar Usuários</a></li>
+                <li><a href="/register">▸ Criar Usuário</a></li>
+                {% endif %}
+            </ul>
+        </div>
+
+        <div class="menu-footer">
+            <button id="toggle-theme"><i class="fa fa-moon"></i> Tema</button>
+            <a href="/logout" class="logout">▸ Sair</a>
+        </div>
+    </div>
+
+    <div class="content">
+        {% block conteudo %}{% endblock %}
+    </div>
+
+    <script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const body = document.body;
+        const sidebar = document.getElementById("sidebar");
+        const menuToggle = document.getElementById("menuToggle");
+        const toggleTheme = document.getElementById("toggle-theme");
+
+        menuToggle.addEventListener("click", () => {
+            sidebar.classList.toggle("active");
+            menuToggle.classList.toggle("mover");
+        });
+
+        const temaSalvo = localStorage.getItem("tema");
+        if (temaSalvo === "dark") {
+            body.classList.add("dark-mode");
+            const icon = toggleTheme.querySelector("i");
+            icon.classList.remove("fa-moon");
+            icon.classList.add("fa-sun");
+        }
+
+        toggleTheme.addEventListener("click", () => {
+            body.classList.toggle("dark-mode");
+            const icon = toggleTheme.querySelector("i");
+            icon.classList.toggle("fa-moon");
+            icon.classList.toggle("fa-sun");
+            localStorage.setItem("tema", body.classList.contains("dark-mode") ? "dark" : "light");
+        });
+    });
+    </script>
+
+</body>
+</html>

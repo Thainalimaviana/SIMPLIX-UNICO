@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
   <meta charset="UTF-8">
   <title>Criar Usuário</title>
@@ -17,7 +18,7 @@
       backdrop-filter: blur(12px) saturate(180%);
       -webkit-backdrop-filter: blur(12px) saturate(180%);
       border: 1px solid rgba(255, 255, 255, 0.2);
-      box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
       text-align: center;
       color: var(--cor-texto);
       animation: fadeIn 0.6s ease-in-out;
@@ -37,12 +38,12 @@
       border-radius: 10px;
       border: 1px solid rgba(255, 255, 255, 0.171);
       background: rgba(161, 161, 161, 0.35);
-      color: #3d3d3d; 
+      color: #3d3d3d;
       font-size: 16px;
       outline: none;
       box-sizing: border-box;
       cursor: pointer;
-      appearance: none; 
+      appearance: none;
     }
 
     .register-container button {
@@ -57,8 +58,9 @@
       background-color: #4c94e7;
       color: white;
       transition: 0.3s;
-      box-shadow: 0 4px 0 rgba(0,0,0,0.2);
+      box-shadow: 0 4px 0 rgba(0, 0, 0, 0.2);
     }
+
     .register-container button:hover {
       background-color: #1565c0;
     }
@@ -70,11 +72,13 @@
       text-decoration: none;
       font-size: 14px;
     }
+
     .link:hover {
       text-decoration: underline;
     }
   </style>
 </head>
+
 <body class="pagina">
   <div class="register-container">
     <h2>Criar Usuário</h2>
@@ -89,7 +93,11 @@
       <button type="submit">Registrar</button>
     </form>
     <a class="link" href="/usuarios">Gerenciar Usuários</a>
-    <a href="/index" class="btn-voltar">Voltar</a>
   </div>
+  <a href="/index" class="btn-voltar-topo">
+    <i class="fa fa-arrow-left"></i> Voltar
+  </a>
+
 </body>
+
 </html>

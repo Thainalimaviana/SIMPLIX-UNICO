@@ -12,7 +12,7 @@
       justify-content: center;
       align-items: center;
       height: 100vh;
-      background: linear-gradient(135deg, #3a0ca3, #7209b7, #f72585);
+      background: linear-gradient(40deg, var(--gradiente-inicio), var(--gradiente-fim));
       font-family: 'Poppins', sans-serif;
       color: #fff;
     }
@@ -235,6 +235,10 @@
 </head>
 
 <body>
+  <a href="/index" class="btn-voltar-topo">
+    <i class="fa fa-arrow-left"></i> Voltar
+  </a>
+
   <div class="container">
     <h1>Cadastrar Cliente</h1>
 
@@ -305,8 +309,7 @@
       </div>
 
       <button type="button" id="btnFinalizar">Finalizar Cadastro</button>
-      <button type="button" class="btn-voltar" onclick="window.location.href='/index'">Voltar à tela inicial</button>
-      <button type="button" class="btn-voltar" id="voltar2">Voltar</button>
+      <button type="button" class="btn-voltar" id="voltar2">Seleção de Tabelas</button>
     </form>
 
     <div id="linkBox" class="hidden">

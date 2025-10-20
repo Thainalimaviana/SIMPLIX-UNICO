@@ -93,15 +93,18 @@
 </head>
 
 <body class="pagina">
+    {% extends "base.html" %}
+    {% block titulo %}Editar Usuário{% endblock %}
+    {% block conteudo %}
     <div class="editar-container">
         <h2>Editar Usuário</h2>
         <form method="post">
             <input type="text" name="nome" value="{{ user[1] }}" required>
             <input type="password" name="senha" placeholder="Nova Senha (opcional)">
-            <button type="submit">Salvar Alterações</button>
+            <button type="submit" class="azul"><i class="fa fa-save"></i> Salvar Alterações</button>
         </form>
-        <a href="/usuarios" class="btn-voltar">← Voltar</a>
     </div>
+    {% endblock %}
 </body>
 
 </html>

@@ -10,7 +10,7 @@
   <link rel="icon" type="image/png" href="{{ url_for('static', filename='img/logo.png') }}">
   <style>
     body {
-      background: linear-gradient(135deg, #3a0ca3, #7209b7, #f72585);
+      background: linear-gradient(40deg, var(--gradiente-inicio), var(--gradiente-fim));
       font-family: 'Poppins', sans-serif;
       color: #fff;
       display: flex;
@@ -195,7 +195,33 @@
   </style>
 </head>
 
-<body>
+<body class="pagina">
+  <button class="menu-toggle" id="menuToggle"><i class="fa fa-bars"></i></button>
+  <div class="sidebar" id="sidebar">
+    <div>
+      <div class="logo">SIMPLIX 🎃</div>
+      <div class="user-info">
+        <h3>{{ session["user"] }}</h3>
+        <span>{{ session["role"] }}</span>
+      </div>
+
+      <ul class="menu">
+        <li><a href="/index">▸ Dashboard</a></li>
+        <li><a href="/cadastrar">▸ Cadastrar Cliente</a></li>
+        {% if session['role'] == 'admin' %}
+        <li><a href="/esteira">▸ Esteira</a></li>
+        <li><a href="/usuarios">▸ Gerenciar Usuários</a></li>
+        <li><a href="/register">▸ Criar Usuário</a></li>
+        {% endif %}
+      </ul>
+    </div>
+
+    <div class="menu-footer">
+      <button id="toggle-theme"><i class="fa fa-moon"></i> Tema</button>
+      <a href="/logout" class="logout">▸ Sair</a>
+    </div>
+  </div>
+
   <div class="container">
     <h1>Gerenciar Usuários</h1>
 
@@ -227,13 +253,41 @@
       </tbody>
     </table>
 
-    <a href="/index" class="btn-voltar">Voltar</a>
   </div>
 
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/js/all.min.js"></script>
 
   <script>
+    const menuToggle = document.getElementById("menuToggle");
+    const sidebar = document.getElementById("sidebar");
+    const content = document.querySelector(".container");
+
+    menuToggle.addEventListener("click", () => {
+      sidebar.classList.toggle("active");
+      content.classList.toggle("active");
+      menuToggle.classList.toggle("mover");
+    });
+
+    const toggleTheme = document.getElementById("toggle-theme");
+    toggleTheme.addEventListener("click", () => {
+      document.body.classList.toggle("dark-mode");
+      localStorage.setItem("modoEscuro", document.body.classList.contains("dark-mode"));
+      const icon = toggleTheme.querySelector("i");
+      icon.classList.toggle("fa-moon");
+      icon.classList.toggle("fa-sun");
+    });
+
+    if (localStorage.getItem("modoEscuro") === "true") {
+      document.body.classList.add("dark-mode");
+      const icon = document.querySelector("#toggle-theme i");
+      if (icon) {
+        icon.classList.remove("fa-moon");
+        icon.classList.add("fa-sun");
+      }
+    }
+
     $(document).ready(function () {
       $('#usuarios').DataTable({
         paging: true,
@@ -249,8 +303,8 @@
           }
         },
         infoCallback: function (settings, start, end, max, total, pre) {
-          const exibindo = end - start + 1; // quantidade exibida
-          const porPagina = settings._iDisplayLength; // limite configurado
+          const exibindo = end - start + 1;
+          const porPagina = settings._iDisplayLength;
           const qtdPagina = Math.min(exibindo, porPagina);
           return `${qtdPagina} de ${porPagina} usuários`;
         }
