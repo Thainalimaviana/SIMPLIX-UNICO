@@ -308,7 +308,7 @@ def simplix_passo12():
     payload1 = {
         "cpf": cpf,
         "callBackBalance": {
-            "url": "https://webhook.site/82d16202-0406-4088-bfd7-82edf9d23497",
+            "url": "https://webhook.site/b1348a3c-d2fd-45a9-93e3-282c83633587",
             "method": "POST"
         }
     }
@@ -346,7 +346,7 @@ def simplix_passo12():
     payload2 = {
         "transactionId": transactionId,
         "callBackSimulate": {
-            "url": "https://webhook.site/82d16202-0406-4088-bfd7-82edf9d23497",
+            "url": "https://webhook.site/b1348a3c-d2fd-45a9-93e3-282c83633587",
             "method": "POST"
         }
     }
