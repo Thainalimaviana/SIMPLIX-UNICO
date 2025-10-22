@@ -425,7 +425,7 @@ def simplix_passo12():
                     "https://simplix-integration.partner1.com.br/api/Proposal/Simulate",
                     json=payload_simulate,
                     headers=headers,
-                    timeout=10
+                    timeout=15
                 )
 
                 print(f"[DEBUG] Status consulta direta: {resp_final.status_code}")
@@ -539,7 +539,7 @@ def simplix_cadastrar():
             "https://simplix-integration.partner1.com.br/api/Proposal/Create",
             headers=headers,
             json=payload,
-            timeout=90
+            timeout=60
         )
 
         print(f"[DEBUG] Status: {response.status_code}")
