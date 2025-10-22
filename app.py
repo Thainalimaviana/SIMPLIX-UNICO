@@ -319,7 +319,7 @@ def simplix_passo12():
             "https://simplix-integration.partner1.com.br/api/Fgts/balance-request",
             json=payload1,
             headers=headers,
-            timeout=60
+            timeout=30
         )
 
         print(f"[DEBUG] Status PASSO 1: {resp1.status_code}")
@@ -358,13 +358,13 @@ def simplix_passo12():
 
     print(f"[DEBUG] Iniciando PASSO 2 (simulate com re-tentativas)...")
 
-    for tentativa in range(10):
+    for tentativa in range(2):
         try:
             resp2 = requests.post(
                 "https://simplix-integration.partner1.com.br/api/Fgts/simulate",
                 json=payload2,
                 headers=headers,
-                timeout=60
+                timeout=30
             )
 
             print(f"[DEBUG] Tentativa {tentativa + 1} - Status: {resp2.status_code}")
@@ -397,12 +397,12 @@ def simplix_passo12():
                 print(f"[PASSO 2 ✅] {len(tabelas)} tabelas retornadas na tentativa {tentativa + 1}.")
                 break
             else:
-                print(f"[AGUARDANDO] Tentativa {tentativa + 1}/10 — resultados ainda não disponíveis...")
-                time.sleep(3)
+                print(f"[AGUARDANDO] Tentativa {tentativa + 1}/2 — resultados ainda não disponíveis...")
+                time.sleep(2)
 
         except Exception as e:
             print(f"[ERRO AO CONSULTAR SIMULATE ❌] {e}")
-            time.sleep(3)
+            time.sleep(2)
 
     if not tabelas:
         print("[FINAL ❌] Nenhuma tabela retornada após todas as tentativas.")
@@ -410,9 +410,9 @@ def simplix_passo12():
 
         try:
             tentativa_sincrona = 0
-            while tentativa_sincrona < 3:
+            while tentativa_sincrona < 5:
                 tentativa_sincrona += 1
-                print(f"[SINCRONO 🔁] Tentativa {tentativa_sincrona}/3 (modo síncrono)...")
+                print(f"[SINCRONO 🔁] Tentativa {tentativa_sincrona}/5 (modo síncrono)...")
 
                 payload_simulate = {
                         "cpf": cpf,
@@ -425,7 +425,7 @@ def simplix_passo12():
                     "https://simplix-integration.partner1.com.br/api/Proposal/Simulate",
                     json=payload_simulate,
                     headers=headers,
-                    timeout=60
+                    timeout=10
                 )
 
                 print(f"[DEBUG] Status consulta direta: {resp_final.status_code}")
