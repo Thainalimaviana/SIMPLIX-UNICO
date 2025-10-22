@@ -1,14 +1,14 @@
 :root {
-    --gradiente-inicio: #2500c9;
-    --gradiente-fim: #b800f0;
+    --gradiente-inicio: #27be01;
+    --gradiente-fim: #000000;
     --cor-texto: #fff;
     --bg-container: rgba(255, 255, 255, 0.12);
     --bg-input: rgba(255, 255, 255, 0.15);
 }
 
 .dark-mode {
-    --gradiente-inicio: #fd7a00;
-    --gradiente-fim: #2a005a;
+    --gradiente-inicio: #b4b4b4;
+    --gradiente-fim: #27be01;
     --cor-texto: #ffffff;
     --bg-container: rgba(0, 0, 0, 0.4);
     --bg-input: rgba(255, 255, 255, 0.08);
@@ -27,7 +27,7 @@ body.pagina {
 }
 
 h1.titulo-tomorrow {
-    font-family: 'Creepster', cursive;
+    font-family: 'Poppins', cursive;
     font-size: 52px;
     letter-spacing: 2px;
     color: var(--cor-texto);
